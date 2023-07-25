@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Space Button Counter</title>
+    <style>
+        body {
+            text-align: center;
+            font-size: 48px;
+        }
+        #count {
+            font-size: 96px;
+        }
+        #spaceButtonTimer {
+            font-size: 96px;
+        }
+        #totalTimer {
+            font-size: 96px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Press the Space Button</h1>
+    <p>Number of Spaces Pressed: <span id="count">0</span></p>
+    <p>Time Elapsed when Space Button Pressed:</p>
+    <p><span id="spaceButtonTimer">0 seconds</span></p>
+    <p>Time Elapsed: <span id="totalTimer">0 seconds</span></p>
+    <button id="resetButton" onclick="resetCount()" disabled>Reset Count</button>
+
+    <script>
+        let count = 0;
+        let startTime = null;
+        let totalElapsedTime = 0;
+        let spaceButtonTime = 0;
+
+        document.body.addEventListener('keydown', (event) => {
+            if (event.key === ' ') {
+                count++;
+                document.getElementById('count').textContent = count;
+
+                // Start the timer on the first space button press
+                if (count === 1) {
+                    startTime = new Date();
+                    updateTimer();
+                }
+
+                // Record the time of space button press
+                spaceButtonTime = new Date();
+                document.getElementById('spaceButtonTimer').textContent = formatTime((spaceButtonTime - startTime) / 1000);
+
+                // Enable the "Reset Count" button when the count is greater than 0
+                if (count > 0) {
+                    document.getElementById('resetButton').removeAttribute('disabled');
+                }
+            }
+        });
+
+        function updateTimer() {
+            if (startTime) {
+                const currentTime = new Date();
+                totalElapsedTime = (currentTime - startTime) / 1000;
+                document.getElementById('totalTimer').textContent = formatTime(totalElapsedTime);
+                requestAnimationFrame(updateTimer);
+            }
+        }
+
+        function formatTime(seconds) {
+            if (seconds < 60) {
+                return seconds.toFixed(2) + ' seconds';
+            } else if (seconds < 3600) {
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = (seconds % 60).toFixed(2);
+                return minutes + ' minutes ' + remainingSeconds + ' seconds';
+            } else {
+                const hours = Math.floor(seconds / 3600);
+                const remainingMinutes = Math.floor((seconds % 3600) / 60);
+                const remainingSeconds = (seconds % 60).toFixed(2);
+                return hours + ' hours ' + remainingMinutes + ' minutes ' + remainingSeconds + ' seconds';
+            }
+        }
+
+        function resetCount() {
+            count = 0;
+            startTime = null;
+            totalElapsedTime = 0;
+            spaceButtonTime = 0;
+            document.getElementById('count').textContent = count;
+            document.getElementById('spaceButtonTimer').textContent = '0 seconds';
+            document.getElementById('totalTimer').textContent = '0 seconds';
+            // Disable the "Reset Count" button again after resetting the count
+            document.getElementById('resetButton').setAttribute('disabled', 'true');
+        }
+    </script>
+</body>
+</html>
